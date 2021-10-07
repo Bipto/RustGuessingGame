@@ -1,16 +1,18 @@
 use rand;
 use rand::Rng;
 
-fn valid_value_entered(guess: i16, value: i16){
+fn valid_value_entered(guess: i16, value: i16) -> bool{
     if guess > value{
-         println!("Your guess was too high, you guessed: {}, and the number was: {}!", guess, value);
+         println!("Your guess was too high, you guessed: {}", guess);
     }
-        else if guess < value{
-        println!("Your guess was too low, you guessed: {}, and the number was {}!", guess, value);
+    else if guess < value{
+        println!("Your guess was too low, you guessed: {}", guess);
     }
-        else{
+    else{
         println!("You guessed correctly. The number was {}!", value);
+        return true;
     }
+    return false;
 }
 
 fn invalid_value_entered(){
@@ -23,6 +25,8 @@ pub fn run(){
 
     let value: i16 = rand::thread_rng().gen_range(0..10);
 
+    let mut correct_value_guessed = false;
+
     while guess_count > 0 {
 
         let mut user_input = String::new();
@@ -33,11 +37,16 @@ pub fn run(){
         let result = user_input.trim_end().parse();
 
         match result{
-            Ok(n) => valid_value_entered(n, value),
+            Ok(n) => correct_value_guessed = valid_value_entered(n, value),
             Err(_e) => invalid_value_entered()
         }
 
-        guess_count -= 1;
-        println!("You have {} guesses remaining!", guess_count);
+        if correct_value_guessed {
+            break;
+        }
+        else{
+            guess_count -= 1;
+            println!("You have {} guesses remaining!", guess_count);
+        }
     }
 }
